@@ -26,7 +26,7 @@
   },
   {
     "name": "日本news24",
-    "enable": true,
+    "enable": false,
     "address": "https://n24-cdn-live.ntv.co.jp/ch01/High.m3u8"
   },
   {

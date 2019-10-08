@@ -16,18 +16,48 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import java.lang.ref.WeakReference;
+import java.util.List;
 
-public class MainActivity extends AppCompatActivity {
+import dai.android.app.free.player.data.Address;
+
+//
+// https://raw.githubusercontent.com/emacs1024/freeplayer/master/app/src/main/assets/playlist.json
+//
+
+public class MainActivity extends AppCompatActivity implements PlayAddress.ICallBack {
     private final static String TAG = "MainActivity";
 
     private SurfaceCallBack mSurfaceCallBack;
     private SurfaceView mVideoDisplay;
+    private List<Address> mAddresses;
+
+    private int mPlayIndex = 0;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         initView();
+
+        // 获取播放地址
+        PlayAddress.getInstance().getPlayData(this);
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+
+        VideoPlayer.getInstance().release();
+    }
+
+    @Override
+    public void onComplete(List<Address> addresses) {
+        if (null == addresses || addresses.isEmpty()) {
+            Log.e(TAG, "[onComplete]: empty play address");
+            mAddresses = null;
+            return;
+        }
+        mAddresses = addresses;
     }
 
     private void initView() {
@@ -68,13 +98,6 @@ public class MainActivity extends AppCompatActivity {
         mVideoDisplay.getHolder().addCallback(mSurfaceCallBack);
     }
 
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-
-        VideoPlayer.getInstance().release();
-    }
-
 
     // 漫威电影
     // private static final String URI = "http://aldirect.hls.huya.com/huyalive/30765679-2504742278-10757786168918540288-3049003128-10057-A-0-1_1200.m3u8";
@@ -82,17 +105,29 @@ public class MainActivity extends AppCompatActivity {
     // 雍正王朝
     // https 不支持
     // private static final String URI = "https://txdirect.hls.huya.com/huyalive/29359996-2689277426-11550358594541060096-2847699098-10057-A-0-1_1200.m3u8";
-    private static final String URI = "http://txdirect.hls.huya.com/huyalive/29359996-2689277426-11550358594541060096-2847699098-10057-A-0-1_1200.m3u8";
+    // private static final String URI = "http://txdirect.hls.huya.com/huyalive/29359996-2689277426-11550358594541060096-2847699098-10057-A-0-1_1200.m3u8";
 
     // 日本电视台
     // private static final String URI = "http://192.240.127.34:1935/live/cs14.stream/media_1254.m3u8";
 
     // 老友记
-    // private static final String URI = "http://aldirect.hls.huya.com/huyalive/29169025-2686220018-11537227127170531328-2847699120-10057-A-1524041208-1_1200.m3u8";
+    private static final String URI = "http://aldirect.hls.huya.com/huyalive/29169025-2686220018-11537227127170531328-2847699120-10057-A-1524041208-1_1200.m3u8";
 
     private void startPlay(SurfaceHolder holder) {
         Log.d(TAG, "[startPlay]");
-        VideoPlayer.getInstance().setDataSource(VideoPlayer.PlayerCode.IJK, new MyPlayCallBack(this), holder, URI);
+
+        String strUrl = URI;
+        if (null != mAddresses && !mAddresses.isEmpty()) {
+            if (mPlayIndex >= mAddresses.size()) {
+                mPlayIndex = 0;
+            }
+            Address address = mAddresses.get(mPlayIndex++);
+            Log.d(TAG, "current play info:\n" + address);
+
+            strUrl = address.url;
+        }
+
+        VideoPlayer.getInstance().setDataSource(VideoPlayer.PlayerCode.IJK, new MyPlayCallBack(this), holder, strUrl);
     }
 
     private void start() {
@@ -125,8 +160,10 @@ public class MainActivity extends AppCompatActivity {
                 case MotionEvent.ACTION_UP: {
                     if (currentPosX - posDownX > 0 && (Math.abs(currentPosX - posDownX) > 450)) {
                         Log.d(TAG, "[onTouch]: go to -->");
+                        startPlay(mVideoDisplay.getHolder());
                     } else if (currentPosX - posDownX < 0 && (Math.abs(currentPosX - posDownX) > 450)) {
                         Log.d(TAG, "[onTouch]: go to <--");
+                        startPlay(mVideoDisplay.getHolder());
                     }
 
                     break;

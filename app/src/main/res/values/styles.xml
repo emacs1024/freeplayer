@@ -1,0 +1,10 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.NoActionBar" />
+
+    <style name="ActivityFullScreen" parent="Theme.AppCompat.NoActionBar">
+        <item name="isLightTheme">false</item>
+    </style>
+
+</resources>

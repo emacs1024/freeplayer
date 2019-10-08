@@ -1,0 +1,42 @@
+[
+  {
+    "name": "好莱坞电影",
+    "enable": true,
+    "address": "http://aldirect.hls.huya.com/huyalive/30765679-2504742278-10757786168918540288-3049003128-10057-A-0-1_1200.m3u8"
+  },
+  {
+    "name": "雍正王朝",
+    "enable": true,
+    "address": "http://txdirect.hls.huya.com/huyalive/29359996-2689277426-11550358594541060096-2847699098-10057-A-0-1_1200.m3u8"
+  },
+  {
+    "name": "日本电台-history",
+    "enable": true,
+    "address": "http://192.240.127.34:1935/live/cs14.stream/media_1254.m3u8"
+  },
+  {
+    "name": "日本漫画",
+    "enable": true,
+    "address": "http://192.240.127.34:1935/live/cs19.stream/playlist.m3u8?wowzasessionid=1566329228"
+  },
+  {
+    "name": "卫星剧场Eisei-Gekijo",
+    "enable": true,
+    "address": "http://192.240.127.34:1935/live/cs18.stream/playlist.m3u8?wowzasessionid=1009455217"
+  },
+  {
+    "name": "日本news24",
+    "enable": true,
+    "address": "https://n24-cdn-live.ntv.co.jp/ch01/High.m3u8"
+  },
+  {
+    "name": "日本news24",
+    "enable": true,
+    "address": "http://n24-cdn-live.ntv.co.jp/ch01/High.m3u8"
+  },
+  {
+    "name": "日本03",
+    "enable": true,
+    "address": "http://192.240.127.34:1935/live/cs11.stream/playlist.m3u8"
+  }
+]

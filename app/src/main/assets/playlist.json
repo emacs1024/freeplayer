@@ -38,5 +38,45 @@
     "name": "日本03",
     "enable": true,
     "address": "http://192.240.127.34:1935/live/cs11.stream/playlist.m3u8"
+  },
+  {
+    "name": "老友记",
+    "enable": true,
+    "address": "http://aldirect.hls.huya.com/huyalive/29169025-2686220018-11537227127170531328-2847699120-10057-A-1524041208-1_1200.m3u8"
+  },
+  {
+    "name": "吴京电影",
+    "enable": true,
+    "address": "http://aldirect.hls.huya.com/huyalive/30765679-2554414705-10971127618396487680-3048991636-10057-A-0-1_1200.m3u8"
+  },
+  {
+    "name": "女神系列",
+    "enable": true,
+    "address": "http://aldirect.hls.huya.com/huyalive/94525224-2472147404-10617792251071299584-2777026638-10057-A-0-1_1200.m3u8"
+  },
+  {
+    "name": "女神系列",
+    "enable": true,
+    "address": "http://aldirect.hls.huya.com/huyalive/94525224-2472147404-10617792251071299584-2777026638-10057-A-0-1_1200.m3u8"
+  },
+  {
+    "name": "李连杰电影",
+    "enable": true,
+    "address": "http://js.hls.huya.com/huyalive/94525224-2460686093-10568566295157014528-2789253848-10057-A-0-1_1200.m3u8"
+  },
+  {
+    "name": "顶级科幻",
+    "enable": true,
+    "address": "http://aldirect.hls.huya.com/huyalive/28466698-2689656864-11551988268341919744-2847699194-10057-A-0-1_1200.m3u8"
+  },
+  {
+    "name": "金庸电影",
+    "enable": true,
+    "address": "http://aldirect.hls.huya.com/huyalive/29359996-2689645314-11551938661469650944-2847687586-10057-A-0-1_1200.m3u8"
+  },
+  {
+    "name": "林正英电影",
+    "enable": true,
+    "address": "http://tx.hls.huya.com/huyalive/94525224-2460686034-10568566041753944064-2789274542-10057-A-0-1_1200.m3u8"
   }
 ]

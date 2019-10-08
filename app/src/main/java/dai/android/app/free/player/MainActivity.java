@@ -99,16 +99,7 @@ public class MainActivity extends AppCompatActivity implements PlayAddress.ICall
     }
 
 
-    // 漫威电影
-    // private static final String URI = "http://aldirect.hls.huya.com/huyalive/30765679-2504742278-10757786168918540288-3049003128-10057-A-0-1_1200.m3u8";
-
-    // 雍正王朝
-    // https 不支持
-    // private static final String URI = "https://txdirect.hls.huya.com/huyalive/29359996-2689277426-11550358594541060096-2847699098-10057-A-0-1_1200.m3u8";
-    // private static final String URI = "http://txdirect.hls.huya.com/huyalive/29359996-2689277426-11550358594541060096-2847699098-10057-A-0-1_1200.m3u8";
-
-    // 日本电视台
-    // private static final String URI = "http://192.240.127.34:1935/live/cs14.stream/media_1254.m3u8";
+    // 一些地址网站: https://www.belaw.cn/2430.html
 
     // 老友记
     private static final String URI = "http://aldirect.hls.huya.com/huyalive/29169025-2686220018-11537227127170531328-2847699120-10057-A-1524041208-1_1200.m3u8";

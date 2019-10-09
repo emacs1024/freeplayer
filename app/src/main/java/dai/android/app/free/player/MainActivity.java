@@ -99,7 +99,9 @@ public class MainActivity extends AppCompatActivity implements PlayAddress.ICall
     }
 
 
-    // 一些地址网站: https://www.belaw.cn/2430.html
+    // 一些地址网站:
+    // https://www.belaw.cn/2430.html
+    // https://raw.githubusercontent.com/EvilCult/iptv-m3u-maker/master/tv.m3u8
 
     // 老友记
     private static final String URI = "http://aldirect.hls.huya.com/huyalive/29169025-2686220018-11537227127170531328-2847699120-10057-A-1524041208-1_1200.m3u8";

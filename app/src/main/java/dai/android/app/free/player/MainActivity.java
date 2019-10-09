@@ -10,7 +10,9 @@ import android.view.SurfaceView;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -29,6 +31,11 @@ public class MainActivity extends AppCompatActivity implements PlayAddress.ICall
 
     private SurfaceCallBack mSurfaceCallBack;
     private SurfaceView mVideoDisplay;
+    private FrameLayout mBoxView;
+    private TextView mTxtInfo;
+
+    private String mStrName;
+
     private List<Address> mAddresses;
 
     private int mPlayIndex = 0;
@@ -64,9 +71,11 @@ public class MainActivity extends AppCompatActivity implements PlayAddress.ICall
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_main);
 
+        mBoxView = findViewById(R.id.BoxView);
         mVideoDisplay = findViewById(R.id.videoDisplay);
+        mTxtInfo = findViewById(R.id.txtInfo);
 
-        View parent = mVideoDisplay.getRootView();
+        View parent = mBoxView.getRootView();
         if (null != parent) {
             parent.setOnTouchListener(mOnTouchListener);
         }
@@ -92,7 +101,7 @@ public class MainActivity extends AppCompatActivity implements PlayAddress.ICall
             layoutParams = new RelativeLayout.LayoutParams(width, height);
         }
 
-        mVideoDisplay.setLayoutParams(layoutParams);
+        mBoxView.setLayoutParams(layoutParams);
 
         mSurfaceCallBack = new SurfaceCallBack(this);
         mVideoDisplay.getHolder().addCallback(mSurfaceCallBack);
@@ -106,21 +115,31 @@ public class MainActivity extends AppCompatActivity implements PlayAddress.ICall
     // 老友记
     private static final String URI = "http://aldirect.hls.huya.com/huyalive/29169025-2686220018-11537227127170531328-2847699120-10057-A-1524041208-1_1200.m3u8";
 
-    private void startPlay(SurfaceHolder holder) {
+    private void startPlay(SurfaceHolder holder, boolean next) {
         Log.d(TAG, "[startPlay]");
 
         String strUrl = URI;
+        mStrName = "老友记";
         if (null != mAddresses && !mAddresses.isEmpty()) {
-            if (mPlayIndex >= mAddresses.size()) {
-                mPlayIndex = 0;
+            if (next) {
+                if (mPlayIndex >= mAddresses.size()) {
+                    mPlayIndex = 0;
+                }
+                Address address = mAddresses.get(mPlayIndex++);
+                mStrName = address.name;
+                strUrl = address.url;
+            } else {
+                if (mPlayIndex < 0) {
+                    mPlayIndex = mAddresses.size() - 1;
+                }
+                Address address = mAddresses.get(mPlayIndex--);
+                mStrName = address.name;
+                strUrl = address.url;
             }
-            Address address = mAddresses.get(mPlayIndex++);
-            Log.d(TAG, "current play info:\n" + address);
-
-            strUrl = address.url;
         }
 
         VideoPlayer.getInstance().setDataSource(VideoPlayer.PlayerCode.IJK, new MyPlayCallBack(this), holder, strUrl);
+        mTxtInfo.post(() -> mTxtInfo.setText(mStrName));
     }
 
     private void start() {
@@ -153,10 +172,10 @@ public class MainActivity extends AppCompatActivity implements PlayAddress.ICall
                 case MotionEvent.ACTION_UP: {
                     if (currentPosX - posDownX > 0 && (Math.abs(currentPosX - posDownX) > 450)) {
                         Log.d(TAG, "[onTouch]: go to -->");
-                        startPlay(mVideoDisplay.getHolder());
+                        startPlay(mVideoDisplay.getHolder(), true);
                     } else if (currentPosX - posDownX < 0 && (Math.abs(currentPosX - posDownX) > 450)) {
                         Log.d(TAG, "[onTouch]: go to <--");
-                        startPlay(mVideoDisplay.getHolder());
+                        startPlay(mVideoDisplay.getHolder(), false);
                     }
 
                     break;
@@ -179,26 +198,48 @@ public class MainActivity extends AppCompatActivity implements PlayAddress.ICall
         @Override
         public void onBufferingUpdate(int percent) {
             Log.d(TAG, "[onBufferingUpdate]: percent=" + percent);
+            ref.get().mTxtInfo.post(() -> {
+                String txt = ref.get().mStrName + ": buffer=" + percent;
+                ref.get().mTxtInfo.setText(txt);
+            });
         }
 
         @Override
         public void onCompletion() {
             Log.d(TAG, "[onCompletion]");
+            ref.get().mTxtInfo.post(() -> {
+                String txt = ref.get().mStrName + ": finish";
+                ref.get().mTxtInfo.setText(txt);
+            });
         }
 
         @Override
         public void onError(int what, int extra) {
             Log.e(TAG, "[onError]: what=" + what + ", extra=" + extra);
+            ref.get().mTxtInfo.post(() -> {
+                String txt = ref.get().mStrName + ": error> what=" + what + " extra=" + extra;
+                ref.get().mTxtInfo.setText(txt);
+            });
         }
 
         @Override
         public void onInfo(int what, int extra) {
             Log.d(TAG, "[onInfo]: what=" + what + ", extra=" + extra);
+            ref.get().mTxtInfo.post(() -> {
+                String txt = ref.get().mStrName + ": info> what=" + what + " extra=" + extra;
+                ref.get().mTxtInfo.setText(txt);
+            });
         }
 
         @Override
         public void onPrepared() {
             Log.d(TAG, "[onPrepared]");
+
+            ref.get().mTxtInfo.post(() -> {
+                String txt = ref.get().mStrName + ": prepared";
+                ref.get().mTxtInfo.setText(txt);
+            });
+
             ref.get().start();
         }
 
@@ -210,6 +251,11 @@ public class MainActivity extends AppCompatActivity implements PlayAddress.ICall
         @Override
         public void onVideoSizeChanged(int width, int height) {
             Log.d(TAG, "[onVideoSizeChanged] width=" + width + ", height=" + height);
+
+            ref.get().mTxtInfo.post(() -> {
+                String txt = ref.get().mStrName + ": size changed> width=" + width + " height=" + height;
+                ref.get().mTxtInfo.setText(txt);
+            });
         }
     }
 
@@ -225,7 +271,7 @@ public class MainActivity extends AppCompatActivity implements PlayAddress.ICall
         @Override
         public void surfaceCreated(SurfaceHolder holder) {
             Log.d(TAG, "[surfaceCreated]");
-            ref.get().startPlay(holder);
+            ref.get().startPlay(holder, true);
         }
 
         @Override

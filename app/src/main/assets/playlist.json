@@ -173,5 +173,60 @@
     "name": "CIBN动作影院",
     "enable": true,
     "address": "http://live3.nty.tv189.com/tm-yg1dzyy-512k.m3u8"
+  },
+  {
+    "name": "电影-甄子丹",
+    "enable": true,
+    "address": "http://aldirect.hls.huya.com/huyalive/29169025-2686219938-11537226783573147648-2847699096-10057-A-1524024759-1_1200.m3u8"
+  },
+  {
+    "name": "电影-迪士尼",
+    "enable": true,
+    "address": "http://aldirect.hls.huya.com/huyalive/29106097-2689406818-11550914328949424128-2789274560-10057-A-1525417691-1_1200.m3u8"
+  },
+  {
+    "name": "超级体育超清-移动",
+    "enable": true,
+    "address": "http://huaweicdn.hb.chinamobile.com/PLTV/2510088/224/3221225907/3.m3u8"
+  },
+  {
+    "name": "电影-速度与激情",
+    "enable": true,
+    "address": "http://aldirect.hls.huya.com/huyalive/29169025-2686219962-11537226886652362752-2710080226-10057-A-0-1_1200.m3u8"
+  },
+  {
+    "name": "NewTV明星大片-移动",
+    "enable": true,
+    "address": "http://223.110.245.159/ott.js.chinamobile.com/PLTV/3/224/3221225535/index.m3u8"
+  },
+  {
+    "name": "CGTN-国际",
+    "enable": true,
+    "address": "http://live.cgtn.com/manifest.m3u8"
+  },
+  {
+    "name": "CCTV-6",
+    "enable": true,
+    "address": "http://cctvcnch5c.v.wscdns.com/live/cctv6_2/index.m3u8"
+  },
+  {
+    "name": "CCTV-9 移动",
+    "enable": true,
+    "address": "http://223.110.245.161/ott.js.chinamobile.com/PLTV/3/224/3221225868/index.m3u8"
+  },
+  {
+    "name": "延边卫视",
+    "enable": true,
+    "address": "http://223.110.245.161/ott.js.chinamobile.com/PLTV/3/224/3221227002/index.m3u8"
+  },
+  {
+    "name": "虎牙电影-1",
+    "enable": true,
+    "address": "http://txdirect.hls.huya.com/huyalive/30765679-2484192708-10669526437821677568-3049003172-10057-A-0-1_1200.m3u8"
+  },
+  {
+    "name": "Newtv超级电影",
+    "enable": true,
+    "address": "http://183.251.61.207/PLTV/88888888/224/3221225804/index.m3u8"
   }
 ]

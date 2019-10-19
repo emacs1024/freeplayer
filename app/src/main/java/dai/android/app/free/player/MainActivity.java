@@ -3,6 +3,7 @@ package dai.android.app.free.player;
 import android.content.res.Configuration;
 import android.graphics.Point;
 import android.os.Bundle;
+import android.os.Vibrator;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
@@ -14,11 +15,13 @@ import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import java.lang.ref.WeakReference;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import dai.android.app.free.player.data.Address;
 
@@ -29,25 +32,51 @@ import dai.android.app.free.player.data.Address;
 public class MainActivity extends AppCompatActivity implements PlayAddress.ICallBack {
     private final static String TAG = "MainActivity";
 
+    private Vibrator mVibrator;
+
     private SurfaceCallBack mSurfaceCallBack;
     private SurfaceView mVideoDisplay;
     private FrameLayout mBoxView;
     private TextView mTxtInfo;
 
     private String mStrName;
-
     private List<Address> mAddresses;
+    private AtomicInteger mPlayIndex = new AtomicInteger(0);
+    private static final String STR_KEY = "PlayIndex";
 
-    private int mPlayIndex = 0;
+    private float mBaseBrightness = 50F;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        if (null != savedInstanceState) {
+            mPlayIndex.set(savedInstanceState.getInt(STR_KEY, 0));
+        }
+
         initView();
 
         // 获取播放地址
         PlayAddress.getInstance().getPlayData(this);
+
+        setBrightness(mBaseBrightness);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+
+        if (null != mVibrator) {
+            mVibrator.cancel();
+        }
+
+        // release the player
+        VideoPlayer.getInstance().release();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
     }
 
     @Override
@@ -55,6 +84,25 @@ public class MainActivity extends AppCompatActivity implements PlayAddress.ICall
         super.onBackPressed();
 
         VideoPlayer.getInstance().release();
+    }
+
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        outState.putInt(STR_KEY, mPlayIndex.get());
+    }
+
+    @Override
+    protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+
+        mPlayIndex.set(savedInstanceState.getInt(STR_KEY, 0));
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        return super.onTouchEvent(event);
     }
 
     @Override
@@ -66,6 +114,30 @@ public class MainActivity extends AppCompatActivity implements PlayAddress.ICall
         }
         mAddresses = addresses;
     }
+
+
+    private void setBrightness(float brightness) {
+        WindowManager.LayoutParams lp = getWindow().getAttributes();
+        lp.screenBrightness = lp.screenBrightness + brightness / 255.0F;
+        if (lp.screenBrightness > 1) {
+            lp.screenBrightness = 1;
+
+            mVibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
+            if (null != mVibrator) {
+                long[] pattern = {10, 20};
+                mVibrator.vibrate(pattern, -1);
+            }
+        } else if (lp.screenBrightness < 0.2) {
+            lp.screenBrightness = 0.2F;
+            mVibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
+            if (null != mVibrator) {
+                long[] pattern = {10, 20};
+                mVibrator.vibrate(pattern, -1);
+            }
+        }
+        getWindow().setAttributes(lp);
+    }
+
 
     private void initView() {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -115,27 +187,22 @@ public class MainActivity extends AppCompatActivity implements PlayAddress.ICall
     // 老友记
     private static final String URI = "http://aldirect.hls.huya.com/huyalive/29169025-2686220018-11537227127170531328-2847699120-10057-A-1524041208-1_1200.m3u8";
 
-    private void startPlay(SurfaceHolder holder, boolean next) {
+    private void startPlay(SurfaceHolder holder, int index) {
         Log.d(TAG, "[startPlay]");
 
         String strUrl = URI;
         mStrName = "老友记";
         if (null != mAddresses && !mAddresses.isEmpty()) {
-            if (next) {
-                if (mPlayIndex >= mAddresses.size()) {
-                    mPlayIndex = 0;
-                }
-                Address address = mAddresses.get(mPlayIndex++);
-                mStrName = address.name;
-                strUrl = address.url;
-            } else {
-                if (mPlayIndex < 0) {
-                    mPlayIndex = mAddresses.size() - 1;
-                }
-                Address address = mAddresses.get(mPlayIndex--);
-                mStrName = address.name;
-                strUrl = address.url;
+            if (index >= mAddresses.size()) {
+                index = 0;
+                mPlayIndex.set(index);
+            } else if (index < 0) {
+                index = mAddresses.size() - 1;
+                mPlayIndex.set(index);
             }
+            Address address = mAddresses.get(index);
+            mStrName = address.name;
+            strUrl = address.url;
         }
 
         VideoPlayer.getInstance().setDataSource(VideoPlayer.PlayerCode.IJK, new MyPlayCallBack(this), holder, strUrl);
@@ -172,10 +239,10 @@ public class MainActivity extends AppCompatActivity implements PlayAddress.ICall
                 case MotionEvent.ACTION_UP: {
                     if (currentPosX - posDownX > 0 && (Math.abs(currentPosX - posDownX) > 450)) {
                         Log.d(TAG, "[onTouch]: go to -->");
-                        startPlay(mVideoDisplay.getHolder(), true);
+                        startPlay(mVideoDisplay.getHolder(), mPlayIndex.incrementAndGet());
                     } else if (currentPosX - posDownX < 0 && (Math.abs(currentPosX - posDownX) > 450)) {
                         Log.d(TAG, "[onTouch]: go to <--");
-                        startPlay(mVideoDisplay.getHolder(), false);
+                        startPlay(mVideoDisplay.getHolder(), mPlayIndex.decrementAndGet());
                     }
 
                     break;
@@ -188,7 +255,6 @@ public class MainActivity extends AppCompatActivity implements PlayAddress.ICall
 
 
     private static class MyPlayCallBack implements IPlayerCallBack {
-
         private final WeakReference<MainActivity> ref;
 
         MyPlayCallBack(MainActivity activity) {
@@ -197,7 +263,7 @@ public class MainActivity extends AppCompatActivity implements PlayAddress.ICall
 
         @Override
         public void onBufferingUpdate(int percent) {
-            Log.d(TAG, "[onBufferingUpdate]: percent=" + percent);
+            // Log.d(TAG, "[onBufferingUpdate]: percent=" + percent);
             ref.get().mTxtInfo.post(() -> {
                 String txt = ref.get().mStrName + ": buffer=" + percent;
                 ref.get().mTxtInfo.setText(txt);
@@ -271,7 +337,7 @@ public class MainActivity extends AppCompatActivity implements PlayAddress.ICall
         @Override
         public void surfaceCreated(SurfaceHolder holder) {
             Log.d(TAG, "[surfaceCreated]");
-            ref.get().startPlay(holder, true);
+            ref.get().startPlay(holder, ref.get().mPlayIndex.get());
         }
 
         @Override
